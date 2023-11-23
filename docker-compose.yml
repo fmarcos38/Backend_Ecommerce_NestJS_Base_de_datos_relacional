@@ -1,0 +1,26 @@
+version: '3.3'
+
+services:
+    #esta es la base de datos mysql, osea con estas directivas es como se crea la base de datos en el contenedor
+    mysql:
+      image: mysql:8
+      environment:
+        - MYSQL_DB=my_db
+        - MYSQL_USER=root
+        - MYSQL_ROOT_PASSWORD=root      
+      ports:
+        - '3307:3307'
+      volumes:
+        - ./mysql_data:/var/lib/mysql
+
+    #este es el visualizador de la DB mysql
+    phpmyadmin:
+      image: phpmyadmin/phpmyadmin
+      environment:
+        - MYSQL_USER=root
+        - MYSQL_ROOT_PASSWORD=root 
+        - PMA_HOST=mysql
+      ports:
+        - "8080:80"
+      depends_on:
+        - mysql
