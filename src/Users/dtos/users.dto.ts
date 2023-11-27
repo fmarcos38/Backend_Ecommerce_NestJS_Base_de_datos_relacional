@@ -12,7 +12,7 @@ export class CreateUserDto {
     @IsString()
     @IsNotEmpty()
     @ApiProperty()
-    readonly username: string;
+    readonly name: string;
 
     @IsString()
     @IsNotEmpty()

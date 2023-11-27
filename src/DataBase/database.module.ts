@@ -1,41 +1,34 @@
 import { Module, Global } from '@nestjs/common';
-import { ConfigType } from '@nestjs/config';
-import config from 'src/config';
-import { TypeOrmModule } from '@nestjs/typeorm';
+import { Client } from 'pg';
 
+//----conexion con la base de datos --------//
+const client = new Client({ 
+  user: 'root',
+  host: 'localhost',
+  database: 'my_db',
+  password: '123456',
+  port: 5433,
+});
 
-//modulo GLOBAL accesible para cualquiera
+client.connect();
+
+//acá ya podríamos hacer consultas a la base de datos	mediante queries
+//ejemplo
+/* client.query('SELECT * FROM users', (err, res) => {
+  console.error(err);
+  console.log(res.rows);
+}); */
+
+//al implementar la conexion de forma global, ya no es necesario importarla en cada modulo, NI usar el query anterior
+//cada servicio realizará sus consultas a la base de datos de forma independiente
 @Global()
 @Module({
-  //realizo conexion mediante ORM (como ES un MODULO --> hago la conexion en imports NO dentro de los PROVIDERS)
-  imports: [
-    TypeOrmModule.forRootAsync({
-      inject: [config.KEY], //de aca vienen variab de entorno
-      useFactory: (configService: ConfigType<typeof config>) => { //paso por param el arch config COMO siempre para la inyecc de depend
-        //realizo la conexion async, y le paso las var de entorno YA sean para postgres o mysql
-        const { 
-          mysqlDB,
-          mysqlUser,
-          mysqlPassword,
-          mysqlPort,
-          mysqlHost 
-        } = configService.mysql; //destructuring de las var en el arch config.ts para posgres
-
-        return {
-          type: 'mysql', //especifico a q tipo de DB es. (postgres o mysql)          
-          host: mysqlHost,
-          port: mysqlPort,
-          username: mysqlUser,          
-          password: mysqlPassword,
-          database: mysqlDB,
-          //SI VOY a utilizar la METODOLOGIA DE MIGRACIONES, el sgt parametro debe estar en FALSE
-          synchronize: true, //con esta directiva ahogo q se sincronice al crear entidades Q se creen tablas en la DB
-          autoLoadEntities: true, //le digo q las entidades sean autocargadas
-        };
-      }, 
-    }),
+  providers: [
+    {
+      provide: 'PG',
+      useValue: client, //lo paso con useValue por es un objeto(no es async)
+    },
   ],
-  providers: [],
-  exports: [TypeOrmModule], //aquí lo declaro para q sea accesible para otros modulos
+  exports: ['PG'],
 })
 export class DatabaseModule {}
