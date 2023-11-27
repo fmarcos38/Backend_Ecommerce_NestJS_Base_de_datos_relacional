@@ -1,4 +1,5 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Inject, NotFoundException } from '@nestjs/common';
+import { Client } from 'pg';
 import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
 import { CreateUserDto } from 'src/Users/dtos/users.dto';
 import { Users } from 'src/Users/entities/users.entity';
@@ -6,73 +7,21 @@ import { Users } from 'src/Users/entities/users.entity';
 @Injectable()
 export class UserService {
     constructor(
-        
+        @Inject('PG') private clientPG: Client
     ) {}
 
-    //----declaro un array de users----------//
-    private users: Users[] = [
-        {
-            id: 1,
-            email: 'correo@mail.com',
-            password: '12345',
-            name: 'admin',
-        },
-    ];
-
-
     //traer todos los usuarios
-    findAll() {
-        return this.users;
+    //ejemplo de un servicio que retorna data traida de la base de datos
+    //pero q no es asyncrono (no retorna una promesa) por eso no se usa await en el controlador 
+    getUsers() {
+        return new Promise((resolve, reject) => {
+        this.clientPG.query('SELECT * FROM users', (err, res) => {
+            if (err) {
+            reject(err);
+            }
+            resolve(res.rows);
+        });
+        });
     }
 
-    //traer un usuario
-    findOne(id: number) {
-        const user = this.users.find((user) => user.id === id);
-        if(!user) {
-            return new NotFoundException(`User #${id} not found`);
-        }
-        return user;
-    }
-
-    //crear un usuario
-    create(data: CreateUserDto) {
-        //creo un nuevo usuario generando el ID y agregando los datos
-        const newUser = {
-            id: this.users.length + 1,
-            ...data,
-        };
-        this.users.push(newUser);
-        return newUser;
-    };
-
-    //actualizar un usuario
-    update(id: number, changes: any) {
-        //busco el usuario
-        const user = this.findOne(id);
-        //si el ususario no existe
-        if(!user) {
-            return new NotFoundException(`User #${id} not found`);
-        }
-        //busco el indice del usuario
-        const index = this.users.findIndex((user) => user.id === id);
-        this.users[index] = {
-            ...user,
-            ...changes,
-        };
-        return this.users[index];
-    }
-
-    //eliminar un usuario
-    remove(id: number) {
-        //busco el usuario
-        const user = this.findOne(id);
-        //si el ususario no existe
-        if(!user) {
-            return new NotFoundException(`User #${id} not found`);
-        }
-        //busco el indice del usuario
-        const index = this.users.findIndex((user) => user.id === id);
-        this.users.splice(index, 1);
-        return true;
-    }
 }

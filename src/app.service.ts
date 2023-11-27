@@ -11,7 +11,7 @@ export class AppService {
 
   //ejemplo de un servicio que retorna data traida de la base de datos
   //pero q no es asyncrono (no retorna una promesa) por eso no se usa await en el controlador 
-  getUsers() {
+  getAllUsers() {
     return new Promise((resolve, reject) => {
       this.clientPG.query('SELECT * FROM users', (err, res) => {
         if (err) {
@@ -20,5 +20,5 @@ export class AppService {
         resolve(res.rows);
       });
     });
-    }
   }
+}

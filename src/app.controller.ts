@@ -11,8 +11,8 @@ export class AppController {
   }
 
   //metodo para obtener los usuarios de la base de datos
-  @Get('users')
+  @Get('allUsers')
   getUsers() {
-    return this.appService.getUsers();
+    return this.appService.getAllUsers();
   }
 }

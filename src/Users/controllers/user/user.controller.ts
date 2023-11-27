@@ -6,21 +6,11 @@ import { UserService } from 'src/Users/services/user/user.service';
 export class UserController {
     constructor(private userService: UserService ) {}
 
-    //traer todos los usuarios
-    @Get()
+    //traer todos los usuarios URL: --> http://localhost:3000/user/users
+    @Get('/users')
     getAllUsers() {
-        return this.userService.findAll();
+        return this.userService.getUsers();
     }
 
-    //traer un usuario
-    @Get(':id')
-    getUser(@Param('id') id: string) {
-        return this.userService.findOne(+id);
-    }
-
-    //crear un usuario
-    @Post()
-    create(@Body() payload: CreateUserDto) {
-        return this.userService.create(payload);
-    }
+    
 }
