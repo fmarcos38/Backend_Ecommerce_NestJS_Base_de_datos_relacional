@@ -1,16 +1,31 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import { CreateUserDto } from 'src/Users/dtos/users.dto';
-import { UserService } from 'src/Users/services/user/user.service';
+import {
+    Body,
+    Controller,
+    Delete,
+    Get,
+    Param,
+    Post,
+    ParseIntPipe,
+} from '@nestjs/common';
+import { Users } from '../../entities/users.entity';
+import { UsersService } from '../../services/user/user.service';
 
-@Controller('user')
-export class UserController {
-    constructor(private userService: UserService ) {}
+@Controller('users')
+export class UsersController {
+    constructor(private readonly usersService: UsersService) {}
 
-    //traer todos los usuarios URL: --> http://localhost:3000/user/users
-    @Get('/users')
-    getAllUsers() {
-        return this.userService.getUsers();
+    @Get()
+    async findAll() {
+        return this.usersService.findAll();
     }
 
-    
+    @Get(':id')
+    findOne(@Param('id', ParseIntPipe) id: number): Promise<Users> {
+        return this.usersService.findOne(id);
+    }
+
+    @Delete(':id')
+    remove(@Param('id') id: string): Promise<void> {
+        return this.usersService.remove(id);
+    }
 }

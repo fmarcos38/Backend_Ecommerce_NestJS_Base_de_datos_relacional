@@ -10,9 +10,4 @@ export class AppController {
     return this.appService.getHello();
   }
 
-  //metodo para obtener los usuarios de la base de datos
-  @Get('allUsers')
-  getUsers() {
-    return this.appService.getAllUsers();
-  }
 }

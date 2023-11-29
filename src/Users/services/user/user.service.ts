@@ -1,27 +1,36 @@
-import { Injectable, Inject, NotFoundException } from '@nestjs/common';
-import { Client } from 'pg';
-import { ExceptionsHandler } from '@nestjs/core/exceptions/exceptions-handler';
-import { CreateUserDto } from 'src/Users/dtos/users.dto';
-import { Users } from 'src/Users/entities/users.entity';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { CreateUserDto } from '../../dtos/users.dto';
+import { Users } from '../../entities/users.entity';
 
 @Injectable()
-export class UserService {
+export class UsersService {
     constructor(
-        @Inject('PG') private clientPG: Client
+        @InjectRepository(Users)
+        private readonly usersRepository: Repository<Users>,
     ) {}
 
-    //traer todos los usuarios
-    //ejemplo de un servicio que retorna data traida de la base de datos
-    //pero q no es asyncrono (no retorna una promesa) por eso no se usa await en el controlador 
-    getUsers() {
-        return new Promise((resolve, reject) => {
-        this.clientPG.query('SELECT * FROM users', (err, res) => {
-            if (err) {
-            reject(err);
-            }
-            resolve(res.rows);
-        });
-        });
+async findAll() {
+    const users = await this.usersRepository.find();
+    if(users[0] == null) {
+        return 'No hay usuarios';
+    }
+    return users;
+}
+
+async findOne(id: number) {
+    const user = await this.usersRepository.findOneBy({id});
+
+    if(!user) {
+        throw new HttpException("El prod no existe", HttpStatus.BAD_REQUEST);
     }
 
+    return user;
+}
+
+
+async remove(id: string): Promise<void> {
+    await this.usersRepository.delete(id);
+}
 }
