@@ -14,7 +14,7 @@ import { OrdersItems } from './entities/order-items.entity';
 import { OrderItemService } from './services/order-item/order-item.service';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Users, Customers, Orders, OrdersItems])],
+    imports: [TypeOrmModule.forFeature([Users, Customers, Orders, OrdersItems])],//importo modulos q utilizaré (productsModule[lo usaré para las relaciones])
     providers: [UsersService, CustomerService, OrderService, OrderItemService],
     controllers: [UsersController, CustomerController, OrderController, OrderItemsController],
 })

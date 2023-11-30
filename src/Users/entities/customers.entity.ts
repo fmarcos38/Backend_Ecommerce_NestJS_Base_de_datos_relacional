@@ -1,5 +1,6 @@
 
 import { Column, CreateDateColumn, Entity, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Users } from './users.entity';
 
 @Entity()
 export class Customers {
@@ -26,4 +27,10 @@ export class Customers {
         default: () => 'CURRENT_TIMESTAMP',
     })
     updateAt: Date;
+
+    //atributo para la relacion
+    //relacion 1:1 con users
+    //copn el 2do param hago referencia a la propiedad q cree en users.entity.ts(osea la column q tiene la FK)
+    @OneToOne(() => Users, (user) => user.customer, { nullable: true }) //la relacion puede q sea nula por eso nuleable
+    user: Users;
 }

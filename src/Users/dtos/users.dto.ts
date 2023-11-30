@@ -24,12 +24,13 @@ export class CreateUserDto {
     @ApiProperty()
     readonly role: string;
 
-    //atributo para la relacion usuario -> cliente(si es q al momento de crear un usuario ESTA ligado a un cliente)
-    /* @IsNumber()
+    //atributo para la relacion usuario -> cliente/customer(si es q al momento de crear un usuario ESTA ligado a un cliente)
+    //relacion 1:1
+    @IsNumber()
     @IsPositive()
     @IsOptional()
     @ApiProperty()
-    readonly customerId: number; */
+    readonly customerId: number;
 }
 
 export class UpdateUserDto extends PartialType(CreateUserDto) {}
