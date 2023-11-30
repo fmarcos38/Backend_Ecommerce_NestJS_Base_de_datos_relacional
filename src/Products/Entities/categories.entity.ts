@@ -1,16 +1,20 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
-import { Orders } from './orders.entity';
+import {
+    PrimaryGeneratedColumn,
+    Entity,
+    Column,
+    CreateDateColumn,
+    UpdateDateColumn,
+    ManyToMany,
+} from 'typeorm';
+
 
 @Entity()
-export class OrdersItems {
+export class Category {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ type: 'int' })
-    readonly productId: number;
-
-    @Column({ type: 'int' })
-    quantity: number;
+    @Column({ type: 'varchar', length: 255, unique: true })
+    name: string;
 
     @CreateDateColumn({
         type: 'timestamptz',

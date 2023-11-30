@@ -4,17 +4,17 @@ import { IsNotEmpty, IsNumber, IsPhoneNumber, IsString } from "class-validator";
 export class CreateCustomerDto {
     @IsNumber()
     @IsNotEmpty()
-    @ApiProperty() //para swagger
+    @ApiProperty() 
     readonly name: string;
 
     @IsString()
     @IsNotEmpty()
-    @ApiProperty() //para swagger
+    @ApiProperty() 
     readonly lastName: string;
 
     @IsPhoneNumber()
     @IsNotEmpty()
-    @ApiProperty() //para swagger
+    @ApiProperty() 
     readonly phone: string;
 }
 

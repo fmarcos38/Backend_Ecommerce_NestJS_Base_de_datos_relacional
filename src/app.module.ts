@@ -5,13 +5,9 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './Users/user.module';
-import { DatabaseModule } from './Database/database.module';
-import { DatabaseORMModule } from './Database/databaseORM.module';
-import { DatabaseVariablesModule } from './Database/databaseVariables.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Users } from './Users/entities/users.entity';
 import { join } from 'path';
-
+import { ProductsModule } from './Products/products.module';
 
 @Module({
   imports: [
@@ -27,9 +23,10 @@ import { join } from 'path';
       synchronize: true,
       }),
     }),
-    UsersModule
+    UsersModule,
+    ProductsModule,
   ], //importo modulos que quiero que sean GLOBALES??
   controllers: [AppController], //importo controladores
-  providers: [AppService], //importo servicios
+  providers: [AppService] //importo servicios
 })
 export class AppModule {}

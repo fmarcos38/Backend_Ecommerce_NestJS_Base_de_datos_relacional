@@ -1,16 +1,23 @@
-import { Column, CreateDateColumn, Entity, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
-import { Orders } from './orders.entity';
+import {
+    Entity,
+    PrimaryGeneratedColumn,
+    Column,
+    CreateDateColumn,
+    UpdateDateColumn,
+    OneToMany,
+} from 'typeorm';
+
 
 @Entity()
-export class OrdersItems {
+export class Brand {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ type: 'int' })
-    readonly productId: number;
+    @Column({ type: 'varchar', length: 255, unique: true })
+    name: string;
 
-    @Column({ type: 'int' })
-    quantity: number;
+    @Column({ type: 'varchar', length: 255 })
+    image: string;
 
     @CreateDateColumn({
         type: 'timestamptz',
@@ -23,5 +30,4 @@ export class OrdersItems {
         default: () => 'CURRENT_TIMESTAMP',
     })
     updateAt: Date;
-
 }

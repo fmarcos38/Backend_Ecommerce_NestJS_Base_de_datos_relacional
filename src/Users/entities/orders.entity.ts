@@ -4,7 +4,18 @@ import { OrdersItems } from './order-items.entity';
 
 @Entity()
 export class Orders {
-
     @PrimaryGeneratedColumn()
     id: number;
+
+    @CreateDateColumn({
+        type: 'timestamptz',
+        default: () => 'CURRENT_TIMESTAMP',
+    })
+    createAt: Date;
+
+    @UpdateDateColumn({
+        type: 'timestamptz',
+        default: () => 'CURRENT_TIMESTAMP',
+    })
+    updateAt: Date;
 }
