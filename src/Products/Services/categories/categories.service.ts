@@ -8,10 +8,11 @@ export class CategoriesService {
     constructor(@InjectRepository(Category) private categoryRepository: Repository<Category>) {}
 
     async findAll(){
-        if(!(await this.categoryRepository.find())){
-            return "No categories found";
-        }
-        return this.categoryRepository.find();
+        const categories = await this.categoryRepository.find();
+        if(categories[0] == null){
+            return "No categories";
+        } 
+        return categories;
     }
 
     async findOne(id: number){

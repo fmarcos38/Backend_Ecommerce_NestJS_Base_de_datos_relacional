@@ -42,10 +42,10 @@ export class CreateProductDto {
     readonly brandId: number;
 
     //para la relacion con categorias
-    /* @IsArray()
+    @IsArray()
     @IsNotEmpty()
     @ApiProperty()
-    readonly categoriesIds: number[]; */
+    readonly categoriesIds: number[];
     
 }
 
