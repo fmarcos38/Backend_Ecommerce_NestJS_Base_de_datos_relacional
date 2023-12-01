@@ -9,6 +9,7 @@ import {
     JoinTable,
 } from 'typeorm';
 import { Brand } from './brands.entity';
+import { Category } from './categories.entity';
 
 @Entity()
 export class Product {
@@ -48,4 +49,11 @@ export class Product {
     //la referencia es en la tabla de productos, no hace falta el Join, ya sabe q la FK va a estar en esta tabla
     @ManyToOne(() => Brand, (brand) => brand.products) //muchos productoas pueden tener una marca
     brand: Brand;
+
+    //relacion de productos a categorias
+    //relacion N:M
+    //un producto puede tener muchas categorias y una categoria puede tener muchos productos
+    @ManyToMany(() => Category, (category) => category.products)
+    @JoinTable() //se usa para definir la tabla intermedia NO importa en q entidad se ponga(PERO solo se pone en una)
+    categories: Category[];
 }
