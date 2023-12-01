@@ -2,10 +2,14 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from 'src/Products/Entities/products.entity';
 import { Repository } from 'typeorm';
+//import { BrandsService } from '../brands/brands.service';
 
 @Injectable()
 export class ProductsService {
-    constructor(@InjectRepository(Product) private productRepository: Repository<Product>) {}
+    constructor(
+        @InjectRepository(Product) private productRepository: Repository<Product>,
+        //private brandService: BrandsService,
+    ) {}
 
     async findAll() {
         const products = await this.productRepository.find();
@@ -29,6 +33,8 @@ export class ProductsService {
             return 'Ya existe el producto';
         }
         const newProduct = this.productRepository.create(data);
+
+        //preguntar si existe la marca
         await this.productRepository.save(newProduct);
         return {
             message: 'Producto creado',

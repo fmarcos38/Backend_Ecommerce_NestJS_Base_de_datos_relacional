@@ -6,6 +6,7 @@ import {
     UpdateDateColumn,
     OneToMany,
 } from 'typeorm';
+import { Product } from './products.entity';
 
 
 @Entity()
@@ -30,4 +31,11 @@ export class Brand {
         default: () => 'CURRENT_TIMESTAMP',
     })
     updateAt: Date;
+
+    //relacion de marcas a productos
+    //relacion 1:N
+    //un producto solo puede tener una marca pero una marca puede tener muchos productos
+    //la referencia es en la tabla de productos
+    @OneToMany(() => Product, (product) => product.brand) //una marca puede tener muchos productos
+    products: Product[];
 }

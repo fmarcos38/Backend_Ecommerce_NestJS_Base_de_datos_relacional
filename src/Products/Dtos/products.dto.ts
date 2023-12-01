@@ -35,15 +35,18 @@ export class CreateProductDto {
     @ApiProperty()
     readonly image: string;
 
+    //para la relacion con marcas
     @IsPositive()
     @IsNotEmpty()
     @ApiProperty()
     readonly brandId: number;
 
+    //para la relacion con categorias
     /* @IsArray()
     @IsNotEmpty()
     @ApiProperty()
     readonly categoriesIds: number[]; */
+    
 }
 
 export class UpdateProductDto extends PartialType(CreateProductDto) {}

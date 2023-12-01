@@ -13,7 +13,7 @@ export class UsersService {
     ) {}
 
     async findAll() {
-        const users = await this.usersRepository.find();
+        const users = await this.usersRepository.find({relations: ['customer']});
         if(users[0] == null) {
             return 'No hay usuarios';
         }
@@ -21,7 +21,7 @@ export class UsersService {
     }
 
     async findOne(id: number) {
-        const user = await this.usersRepository.findOneBy({id});
+        const user = await this.usersRepository.findOne({where: {id}, relations: ['customer']});
 
         if(!user) {
             throw new HttpException("El user no existe", HttpStatus.BAD_REQUEST);
