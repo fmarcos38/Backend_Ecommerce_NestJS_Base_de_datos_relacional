@@ -16,7 +16,7 @@ export class ProductsService {
     ) {}
 
     async findAll() {
-        const products = await this.productRepository.find({ relations: ['brand', 'categories'] });
+        const products = await this.productRepository.find({ relations: ['brand', 'categories'] });//puedo o mostrar las relaciones
         if(products[0] == null) {
             return 'No hay usuarios';
         }
@@ -24,7 +24,7 @@ export class ProductsService {
     }
 
     async findOne(id: number) {
-        const product = await this.productRepository.findOne({where: {id}, relations: ['brand'] });
+        const product = await this.productRepository.findOne({where: {id}, relations: ['brand', 'categories'] });
         if(!product) {
             return 'No existe el producto';
         }
@@ -40,7 +40,7 @@ export class ProductsService {
 
         //preguntar si viene la marca
         if (data.brandId) {
-            const brand = await this.brandRepository.findOne({where: {id: data.brandId}});
+            const brand = await this.brandRepository.findOne({where: {id: data.brandId}}); //utilizo el metodo del REPOSITORY, y no el del service PORQ quiero q solo me traiga la marca
             if (brand == null) {
                 return 'No existe la marca';
             }
@@ -73,9 +73,38 @@ export class ProductsService {
             }
             product.brand = brand
         }
+        //pregunto si vienen las categorias (me llega un array de ids)
+        if(changes.categoriesIds) {
+            const categories = await this.categoryRepository.findByIds(changes.categoriesIds);
+            product.categories = categories;
+        }
+
         this.productRepository.merge(product, changes);
         return this.productRepository.save(product);
     }
+
+    //--metodo elim categoria de un producto
+    async removeCategoryOfProduct(productId: number, categoryId: number) {
+        //busco producto
+        const product = await this.productRepository.findOne({where: {id: productId}, relations: ['categories']});
+        
+        if(!product) {
+            return 'No existe el producto';
+        }
+        //busco categoria
+        const category = product.categories.find((item) => { return item.id === categoryId });
+        console.log("Cat:",category);
+        if(!category) {
+            return 'No existe la categoria';
+        }
+        //elimino categoria del producto
+        product.categories = product.categories.filter((item) => item.id !== category.id);
+
+        //guardo cambios
+        return this.productRepository.save(product);
+    }
+
+
 
     async remove(id: number) {
         const product = await this.productRepository.findOne({where: {id}});
