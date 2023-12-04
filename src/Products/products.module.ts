@@ -14,6 +14,6 @@ import { CategoriesService } from "./services/categories/categories.service";
     imports: [TypeOrmModule.forFeature([Product, Brand, Category])],
     controllers: [ ProductController, BrandsController,CategoryController ],
     providers: [ ProductsService, BrandsService, CategoriesService],
-    //exports: [ ProductsService ], // Exportamos el servicio para poder usarlo en otros módulos
+    exports: [ ProductsService, TypeOrmModule ], // Exportamos el servicio para poder usarlo en otros módulos, por ejem en el de USERS
 })
 export class ProductsModule {}

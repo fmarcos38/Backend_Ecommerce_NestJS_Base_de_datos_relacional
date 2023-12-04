@@ -104,6 +104,24 @@ export class ProductsService {
         return this.productRepository.save(product);
     }
 
+    //--agrego categoria a un producto
+    async addCategoryToProduct(productId: number, categoryId: number) {
+        //busco producto
+        const product = await this.productRepository.findOne({where: {id: productId}, relations: ['categories']});
+        if(!product) {  return 'No existe el producto'; }
+
+        //busco la categoria en el producto
+        const category = product.categories.find((item) => { return item.id === categoryId });
+        if(category) {  return 'Ya existe la categoria'; }
+
+        //busco la categoria
+        const categoryAdd = await this.categoryRepository.findOne({where: {id: categoryId}});
+        //agrego la categoria al producto
+        product.categories.push(categoryAdd);
+
+        //guardo cambios
+        return this.productRepository.save(product);
+    }
 
 
     async remove(id: number) {

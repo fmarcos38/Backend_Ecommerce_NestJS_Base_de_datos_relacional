@@ -18,4 +18,14 @@ export class Orders {
         default: () => 'CURRENT_TIMESTAMP',
     })
     updateAt: Date;
+
+    //atributo para la relacion
+    //una orden pertenece a un cliente
+    @ManyToOne(() => Customers, (customer) => customer.orders) 
+    customer: Customers;
+
+    //relacion 1:N con order-items
+    //una orden puede tener muchos items
+    @OneToMany(() => OrdersItems, (orderItem) => orderItem.order)
+    items: OrdersItems[];
 }

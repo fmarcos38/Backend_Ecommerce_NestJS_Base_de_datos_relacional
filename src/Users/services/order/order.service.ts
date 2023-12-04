@@ -1,29 +1,44 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { CreateOrderDto } from 'src/Users/dtos/order.dto';
+import { Customers } from 'src/Users/entities/customers.entity';
 import { Orders } from 'src/Users/entities/orders.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
 export class OrderService {
-    constructor(@InjectRepository(Orders) private ordersRepository: Repository<Orders>) {}
+    constructor(
+        @InjectRepository(Orders) private ordersRepository: Repository<Orders>,
+        @InjectRepository(Customers) private customersRepository: Repository<Customers>
+    ) {}
 
     async findAll() {
-        if((await this.ordersRepository.find()).length == 0) {
-            return 'No hay ordenes';
+        const orders = await this.ordersRepository.find();
+        if(!orders) {
+            return 'No existen ordenes';
         }
-        return this.ordersRepository.find();
+        return orders;
     }
 
     async findOne(id: number) {
-        const order = await this.ordersRepository.findOne({where: {id}});
+        const order = await this.ordersRepository.findOne({where: {id}, relations: ['customer']});
         if(!order) {
             return 'No existe la orden';
         }
         return order;
     }
 
-    async create(data: any) {
-        const newOrder = this.ordersRepository.create(data);
+    //por ahora solo estoy creando la orden, no estoy creando los items
+    async create(data: CreateOrderDto) {
+        const newOrder = new Orders();
+        //busco el cliente
+        if(data.customerId) {
+            const customer = await this.customersRepository.findOne({where: {id: data.customerId}});
+            if(!customer) {
+                return 'No existe el cliente';
+            }
+            newOrder.customer = customer;
+        }
         await this.ordersRepository.save(newOrder);
         return {
             message: 'Orden creada',

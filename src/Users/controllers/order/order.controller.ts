@@ -8,7 +8,11 @@ export class OrderController {
 
     @Get()
     findAll() {
-        return this.orderService.findAll();
+        const orders = this.orderService.findAll();
+        if(orders[0] == null) {
+            return 'No existen ordenes';
+        }
+        return orders;
     }
 
     @Get(':id')

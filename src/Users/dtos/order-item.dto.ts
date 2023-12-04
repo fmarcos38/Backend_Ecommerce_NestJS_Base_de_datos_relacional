@@ -10,6 +10,11 @@ export class CreateOrderItemDto {
     @IsNumber()
     @IsPositive()
     @ApiProperty()
+    readonly orderId: number;
+
+    @IsNumber()
+    @IsPositive()
+    @ApiProperty()
     readonly productId: number;
     
     @IsNumber()
