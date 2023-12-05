@@ -5,6 +5,9 @@ import {
     IsNotEmpty,
     IsPositive,
     IsArray,
+    IsOptional,
+    Min,
+    ValidateIf,
 } from 'class-validator';
 import { PartialType, ApiProperty } from '@nestjs/swagger';
 
@@ -50,3 +53,24 @@ export class CreateProductDto {
 }
 
 export class UpdateProductDto extends PartialType(CreateProductDto) {}
+
+//dto para paginacion y filtrado
+export class FilterProductsDto {
+    @IsOptional()
+    @IsPositive()
+    limit: number; //cuantos productos quiero
+
+    @IsOptional()
+    @Min(0)
+    offset: number; //desde donde empieza
+
+    @IsOptional()
+    @IsPositive()
+    @ValidateIf((item) => item.maxPrice) //valido que si viene el maxPrice, tamb el minPrice
+    minPrice: number; //filtro por precio minimo
+
+    @IsOptional()
+    @IsPositive()
+    @ValidateIf((item) => item.minPrice) //valido que si viene el minPrice, tamb el maxPrice
+    maxPrice: number; //filtro por precio maximo
+}

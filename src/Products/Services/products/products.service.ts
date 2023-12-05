@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from 'src/Products/Entities/products.entity';
-import { In, Repository } from 'typeorm';
+import { Between, Filter, FindOptionsWhere, In, Repository } from 'typeorm';
 import { BrandsService } from '../brands/brands.service';
-import { CreateProductDto } from 'src/Products/Dtos/products.dto';
+import { CreateProductDto, FilterProductsDto } from 'src/Products/Dtos/products.dto';
 import { Category } from 'src/Products/Entities/categories.entity';
 import { Brand } from 'src/Products/Entities/brands.entity';
 
@@ -15,11 +15,49 @@ export class ProductsService {
         @InjectRepository(Category) private categoryRepository: Repository<Category>,
     ) {}
 
-    async findAll() {
-        const products = await this.productRepository.find({ relations: ['brand', 'categories'] });//puedo o mostrar las relaciones
+    //metodo para filtrar y paginar [params? = opcional]
+    async findAll(params?: FilterProductsDto) {
+        //si vienen parametros
+        if(params) {
+            const where: FindOptionsWhere<Product> = {}; //tipeo el where para q no me de error.
+            const { limit, offset, minPrice, maxPrice } = params; 
+            console.log("params:",params);
+
+            //si viene el limit y el offset
+            if(limit && offset){
+                const paginado = await this.productRepository.findAndCount({
+                    relations: ['brand', 'categories'],
+                    take: limit,
+                    skip: offset,
+                    order: {
+                        id: 'ASC'
+                    }
+                });
+                return {
+                    data: paginado[0],
+                    count: paginado[1],
+                };
+                //return this.productRepository.find({ relations: ['brand', 'categories'], take: limit, skip: offset });
+            }
+
+            //si viene el minPrice y el maxPrice
+            if(!minPrice) {
+                return 'Debe ingresar el minPrice';
+            }else if(!maxPrice) {
+                return 'Debe ingresar el maxPrice';
+            }else{
+                return this.productRepository
+                    .createQueryBuilder('product')
+                    .where('product.price >= :minPrice', { minPrice })
+                    .andWhere('product.price <= :maxPrice', { maxPrice })
+                    .getMany();
+            }
+        }
+        const products = await this.productRepository.find({ relations: ['brand', 'categories'], order: { id: 'ASC' } });//puedo o mostrar las relaciones
         if(products[0] == null) {
             return 'No hay usuarios';
         }
+
         return products;
     }
 
@@ -83,6 +121,15 @@ export class ProductsService {
         return this.productRepository.save(product);
     }
 
+    async remove(id: number) {
+        const product = await this.productRepository.findOne({where: {id}});
+        if(!product) {
+            return 'No existe el producto';
+        }
+        await this.productRepository.delete(id);
+        return 'Producto eliminado';
+    }
+
     //--metodo elim categoria de un producto
     async removeCategoryOfProduct(productId: number, categoryId: number) {
         //busco producto
@@ -124,12 +171,5 @@ export class ProductsService {
     }
 
 
-    async remove(id: number) {
-        const product = await this.productRepository.findOne({where: {id}});
-        if(!product) {
-            return 'No existe el producto';
-        }
-        await this.productRepository.delete(id);
-        return 'Producto eliminado';
-    }
+    
 }

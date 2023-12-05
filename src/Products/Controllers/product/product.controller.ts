@@ -1,14 +1,15 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
-import { CreateProductDto, UpdateProductDto } from 'src/Products/Dtos/products.dto';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Post, Put, Query } from '@nestjs/common';
+import { CreateProductDto, FilterProductsDto, UpdateProductDto } from 'src/Products/Dtos/products.dto';
 import { ProductsService } from 'src/Products/Services/products/products.service';
 
 @Controller('product')
 export class ProductController {
     constructor(private productService: ProductsService) {}
 
+    //metodo para filtrar y paginar
     @Get()
-    findAll() {
-        return this.productService.findAll();
+    findAll(@Query() params: FilterProductsDto) {
+        return this.productService.findAll(params);
     }
 
     @Get(':id')
